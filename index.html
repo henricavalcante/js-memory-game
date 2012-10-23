@@ -1,0 +1,191 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>jQuery Memotest, feat. PHP &amp; CSS.</title>
+<script src="js/jquery-1.2.3.pack.js" type="text/javascript"></script>
+<script src="js/jquery-1.2.4b.js" type="text/javascript"></script>
+<script src="js/jquery.timer.js" type="text/javascript"></script>
+<style type="text/css">
+	
+
+	.memotest{
+		border:0px solid #CCC;
+		background-color:#FFF;
+		text-align:left;
+		float:left;
+		position:absolute;
+		margin-left:150px;
+	}
+	.travada{
+		display:none;
+	}
+	.aberta{
+		display:none;
+	}
+	.selecionada{
+		border:1px solid #EEE;
+	}
+	.encontrada{
+		border:1px solid #FFF;
+	}
+
+</style>
+<script type="text/javascript">
+
+
+
+	$(window).ready(function(){
+
+		var config = {
+
+			posx: 0,
+			posy: 0,
+			altura: 300,
+			largura: 300,
+			imagens: {
+				altura: 64,
+				largura: 64
+			}
+		}
+
+		var arr_img = new Array();
+
+		adicionaImagem(1);
+		adicionaImagem(2);
+		adicionaImagem(3);
+		adicionaImagem(4);
+		adicionaImagem(5);
+		adicionaImagem(6);
+		adicionaImagem(7);
+		adicionaImagem(8);
+		adicionaImagem(9);
+		adicionaImagem(10);
+
+
+		callBack = function(){
+
+			alert('teste');
+		}
+
+		function adicionaImagem(img){
+			arr_img.push(img);
+			arr_img.push(img);
+			arr_img.sort(function(){return 0.5 - Math.random()})
+
+		}
+
+		var dv_imagens = $('<div>')
+			.attr('id', 'imagens')
+			.css({
+				'width':config.largura,
+				'height':config.altura,
+				'position': 'absolute',
+				'display': 'block'
+			})
+			.appendTo('body');
+
+
+		for (var i = 0; i < arr_img.length; i++) {
+			
+			var dv_ficha = $('<div>')
+				.attr('id', i)
+				.addClass('ficha')
+				.addClass('s-'+arr_img[i])
+				.css({
+					'width':config.imagens.largura,
+					'height':config.imagens.altura,
+					'background-image':'url(img/64/'+arr_img[i]+'.png)',
+					'border':'1px solid #FFF',
+					'background-repeat':'no-repeat',
+					'float':'left'
+				})
+				.appendTo('#imagens');
+
+			var dv_cover = $('<div>')
+				.attr('id', 'c-' + i)
+				.addClass('ficha-cover')
+				.addClass('c-'+arr_img[i])
+				.attr('img', arr_img[i])
+				.attr('i', i)
+				.css({
+					'width':config.imagens.largura,
+					'height':config.imagens.altura,
+					'border':'0px solid #333',
+					'background-color':'#EEE',
+					'float':'left',
+					'cursor': 'pointer'
+				})
+				.click( 
+					function(){ 
+						$(this).unbind('click');
+						memotest(this);
+					}
+				)
+				.html('&nbsp;')
+				.appendTo(dv_ficha);
+		};
+
+
+		function memotest(obj){ 
+
+			var imagem = $(obj).attr('img');
+			console.log(imagem);
+
+			if( $(".s-"+imagem).hasClass('selecionada')){
+				// Si ya hay una imagen del par ya seleccionada (o sea, elige la 2da correctamente)
+				$(".c-"+imagem).removeClass("aberta"); // Quitamos el cover del Bg, para mostrar la ficha
+				$(".s-"+imagem).addClass("encontrada"); // se marca el div de la ficha como encontrada
+				$(".c-"+imagem).addClass("travada"); 
+				var w = $(".encontrada");
+
+				// Congratulation message / Mensaje de felicitacion.
+				if(w.length == arr_img.length){
+					callBack();
+				}
+			}else if( $(".ficha-cover").hasClass("aberta") ){
+				$(obj).addClass("selecionada"); 
+				$(obj).addClass("aberta"); 
+
+				$.timer(400, function (timer) {				
+						
+					$(".ficha").removeClass("selecionada"); 
+					$(".ficha-cover")
+						.removeClass("aberta")
+						.click( 
+							function(){ 
+								$(this).unbind('click');
+								memotest(this);
+							}
+						) 
+						
+				    timer.stop();
+				});
+			}else{
+				// Si elige la primer ficha (de dos)
+				$(".s-"+imagem).addClass("selecionada"); // for the record... / lo grabamos.
+				$(obj).addClass("aberta"); // display:none;
+
+			}
+		 }
+
+		 
+
+
+		
+	});
+
+</script>
+
+
+</head>
+
+<body>
+
+ 
+
+
