@@ -55,16 +55,10 @@
 
 		var arr_img = new Array();
 
-		adicionaImagem(1);
-		adicionaImagem(2);
-		adicionaImagem(3);
-		adicionaImagem(4);
+		adicionaImagem(1, 2);
+		adicionaImagem(3, 4);
 		adicionaImagem(5);
-		adicionaImagem(6);
-		adicionaImagem(7);
-		adicionaImagem(8);
-		adicionaImagem(9);
-		adicionaImagem(10);
+
 
 
 		callBack = function(){
@@ -72,9 +66,19 @@
 			alert('teste');
 		}
 
-		function adicionaImagem(img){
-			arr_img.push(img);
-			arr_img.push(img);
+		function adicionaImagem(_img, _img2){
+			var _grupo = arr_img.length;
+
+			arr_img.push({grupo: _grupo, img: _img});
+			if (!!_img2)
+			{
+				arr_img.push({grupo: _grupo, img: _img2});
+			}
+			else
+			{
+				arr_img.push({grupo: _grupo, img: _img});
+			}
+
 			arr_img.sort(function(){return 0.5 - Math.random()})
 
 		}
@@ -95,11 +99,11 @@
 			var dv_ficha = $('<div>')
 				.attr('id', i)
 				.addClass('ficha')
-				.addClass('s-'+arr_img[i])
+				.addClass('s-'+arr_img[i].grupo)
 				.css({
 					'width':config.imagens.largura,
 					'height':config.imagens.altura,
-					'background-image':'url(img/64/'+arr_img[i]+'.png)',
+					'background-image':'url(img/64/'+arr_img[i].img+'.png)',
 					'border':'1px solid #FFF',
 					'background-repeat':'no-repeat',
 					'float':'left'
@@ -109,8 +113,9 @@
 			var dv_cover = $('<div>')
 				.attr('id', 'c-' + i)
 				.addClass('ficha-cover')
-				.addClass('c-'+arr_img[i])
-				.attr('img', arr_img[i])
+				.addClass('c-'+arr_img[i].grupo)
+				.attr('img', arr_img[i].img)
+				.attr('grupo', arr_img[i].grupo)
 				.attr('i', i)
 				.css({
 					'width':config.imagens.largura,
@@ -134,13 +139,14 @@
 		function memotest(obj){ 
 
 			var imagem = $(obj).attr('img');
+			var grupo = $(obj).attr('grupo');
 			console.log(imagem);
 
-			if( $(".s-"+imagem).hasClass('selecionada')){
+			if( $(".s-"+grupo).hasClass('selecionada')){
 				// Si ya hay una imagen del par ya seleccionada (o sea, elige la 2da correctamente)
-				$(".c-"+imagem).removeClass("aberta"); // Quitamos el cover del Bg, para mostrar la ficha
-				$(".s-"+imagem).addClass("encontrada"); // se marca el div de la ficha como encontrada
-				$(".c-"+imagem).addClass("travada"); 
+				$(".c-"+grupo).removeClass("aberta"); // Quitamos el cover del Bg, para mostrar la ficha
+				$(".s-"+grupo).addClass("encontrada"); // se marca el div de la ficha como encontrada
+				$(".c-"+grupo).addClass("travada"); 
 				var w = $(".encontrada");
 
 				// Congratulation message / Mensaje de felicitacion.
@@ -167,7 +173,7 @@
 				});
 			}else{
 				// Si elige la primer ficha (de dos)
-				$(".s-"+imagem).addClass("selecionada"); // for the record... / lo grabamos.
+				$(".s-"+grupo).addClass("selecionada"); // for the record... / lo grabamos.
 				$(obj).addClass("aberta"); // display:none;
 
 			}
